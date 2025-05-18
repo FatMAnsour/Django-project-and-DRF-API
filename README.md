@@ -20,78 +20,226 @@ A powerful and flexible API built using **Django REST Framework (DRF)**, designe
 
 ## 🛠️ Installation & Setup
 
-Follow the instructions below to set up the project locally.
-
 ### 1. Clone the Repository
 
 ```bash
-git clone <https://github.com/FatMAnsour/Django-project-and-DRF-API.git>
+git clone <repository-url>
 cd <repository-name>
+```
 
 ### 2. Set Up a Virtual Environment
-![image](https://github.com/user-attachments/assets/c2be9202-5663-4286-b886-005e7d610530)
+
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
 ### 3. Install Dependencies
+
+Make sure PostgreSQL is installed and accessible from the command line, then run:
+
+```bash
 pip install -r requirements.txt
+```
 
-## Database Configuration
+Ensure `requirements.txt` includes:
+
+```txt
+django>=4.0
+djangorestframework>=3.14
+psycopg2-binary>=2.9
+django-debug-toolbar>=4.0
+```
+
+---
+
+## 🗄️ PostgreSQL Configuration
+
 ### 1. Install PostgreSQL
-Download and install PostgreSQL from the official website:
+
+Download and install PostgreSQL from the official website:  
 👉 https://www.postgresql.org/download/
-Make sure to note the installation directory (e.g., C:\Program Files\PostgreSQL\17\bin on Windows).
+
+After installation, make sure the PostgreSQL `bin` directory (e.g., `C:\Program Files\PostgreSQL\17\bin`) is added to your system's PATH.
+
 ### 2. Create a PostgreSQL Database
-Run the following commands in the terminal or using psql
 
-![image](https://github.com/user-attachments/assets/7d180809-3cfc-46b0-84b0-51d56dd1c238)
+Open your terminal or command prompt and run:
 
-### Then, within the PostgreSQL prompt:
-![image](https://github.com/user-attachments/assets/ffc8cfeb-8bb2-48fb-be3d-b716bfd49b74)
+```bash
+psql -U postgres
+```
 
-### 3. Configure settings.py
-Update the DATABASES section in product_search/settings.py
+Then within the PostgreSQL prompt:
 
-![image](https://github.com/user-attachments/assets/614be00e-03d4-4b8a-aff0-d6cfc670b58c)
+```sql
+CREATE DATABASE product_search_db;
+\c product_search_db
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE EXTENSION IF NOT EXISTS unaccent;
+```
+
+> Replace `postgres` with your PostgreSQL username if different.
+
+---
+
+### 3. Configure Django Settings
+
+In `product_search/settings.py`, update the `DATABASES` section:
+
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'product_search_db',
+        'USER': 'your_postgres_user',
+        'PASSWORD': 'your_postgres_password',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+```
 
 ### 4. Add Required Django Apps
 
-![image](https://github.com/user-attachments/assets/6c52e99e-e197-433e-89da-662711a1ba98)
+Ensure the following are included in `INSTALLED_APPS`:
 
-## Database Migrations
+```python
+INSTALLED_APPS = [
+    ...
+    'searchapp',
+    'django.contrib.postgres',
+    'debug_toolbar',
+]
+```
 
-![image](https://github.com/user-attachments/assets/2e623105-a27b-40a1-969c-f2c3e098abd2)
+### 5. (Optional) Configure Django Debug Toolbar
 
-## Run the Development Server
-![image](https://github.com/user-attachments/assets/7801c9dc-3566-4a22-97d3-5dcd0def19d6)
+```python
+if DEBUG:
+    INTERNAL_IPS = ['127.0.0.1']
+```
 
-##  API Reference
+---
 
-Product Search Endpoint
-URL: /search/
-Method: GET
-Description: Search for products with optional filters for category and brand.
+## 🧱 Database Migrations
 
-## Example Requests
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
 
+---
+
+## 👤 Create a Superuser (Optional)
+
+```bash
+python manage.py createsuperuser
+```
+
+---
+
+## 🔄 Run the Development Server
+
+```bash
+python manage.py runserver
+```
+
+- API: http://localhost:8000
+- Admin Panel: http://localhost:8000/admin/
+- Debug Toolbar: http://localhost:8000/__debug__/
+
+---
+
+## 📖 API Reference
+
+### 🔍 Product Search Endpoint
+
+- **URL**: `/search/`
+- **Method**: `GET`
+- **Description**: Search for products with optional filters for category and brand.
+
+#### Query Parameters:
+
+| Parameter   | Required | Description |
+|-------------|----------|-------------|
+| `q`         | ✅       | The search term (supports fuzzy and partial match) |
+| `category`  | ❌       | Filter by category name (case-insensitive) |
+| `brand`     | ❌       | Filter by brand name (case-insensitive) |
+| `page`      | ❌       | Page number (default: 1) |
+| `page_size` | ❌       | Results per page (default: 10, max: 100) |
+
+---
+
+## 🧪 Example Requests
+
+### 1. Basic Search
+
+```http
 GET /search/?q=apple
+```
 
-## Response:
+```json
+{
+  "count": 25,
+  "next": "http://localhost:8000/search/?q=apple&page=2",
+  "previous": null,
+  "results": [
+    {
+      "name": "Apple Juice",
+      "brand": "Nestle",
+      "category": "Beverages",
+      "nutrition_facts": "Calories: 120, Sugar: 25g"
+    },
+    {
+      "name": "Apple Pie",
+      "brand": "BakeryCo",
+      "category": "Desserts",
+      "nutrition_facts": "Calories: 300, Fat: 15g"
+    }
+  ]
+}
+```
 
-![image](https://github.com/user-attachments/assets/f651a1bf-7cde-43a5-a979-97efce9786bc)
+### 2. Filtered Search
 
+```http
+GET /search/?q=choco&category=snacks
+```
 
+```json
+{
+  "count": 10,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "name": "Chocolate Bar",
+      "brand": "Mars",
+      "category": "Snacks",
+      "nutrition_facts": "Calories: 200, Sugar: 20g"
+    }
+  ]
+}
+```
 
+### 3. Empty Query (Error Case)
 
+```http
+GET /search/
+```
 
+```json
+{
+  "error": "Please enter a search query"
+}
+```
 
+---
 
+## 📝 Notes
 
-
-
-
-
-
-
-
-
-
-
-
+- Pagination is supported using `next` and `previous` URLs.
+- Search supports misspellings, partial queries, and mixed languages (English and Arabic).
+- Debug toolbar available at `/__debug__/` when in development mode.
+- Populate `Product`, `Brand`, and `Category` models to view search results.
