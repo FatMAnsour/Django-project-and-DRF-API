@@ -23,8 +23,8 @@ A powerful and flexible API built using **Django REST Framework (DRF)**, designe
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd <repository-name>
+git clone https://github.com/FatMAnsour/Django-project-and-DRF-API.git
+cd Django-project-and-DRF-API
 ```
 
 ### 2. Set Up a Virtual Environment
@@ -40,15 +40,6 @@ Make sure PostgreSQL is installed and accessible from the command line, then run
 
 ```bash
 pip install -r requirements.txt
-```
-
-Ensure `requirements.txt` includes:
-
-```txt
-django>=4.0
-djangorestframework>=3.14
-psycopg2-binary>=2.9
-django-debug-toolbar>=4.0
 ```
 
 ---
@@ -113,13 +104,6 @@ INSTALLED_APPS = [
 ]
 ```
 
-### 5. (Optional) Configure Django Debug Toolbar
-
-```python
-if DEBUG:
-    INTERNAL_IPS = ['127.0.0.1']
-```
-
 ---
 
 ## 🧱 Database Migrations
@@ -159,15 +143,6 @@ python manage.py runserver
 - **Method**: `GET`
 - **Description**: Search for products with optional filters for category and brand.
 
-#### Query Parameters:
-
-| Parameter   | Required | Description |
-|-------------|----------|-------------|
-| `q`         | ✅       | The search term (supports fuzzy and partial match) |
-| `category`  | ❌       | Filter by category name (case-insensitive) |
-| `brand`     | ❌       | Filter by brand name (case-insensitive) |
-| `page`      | ❌       | Page number (default: 1) |
-| `page_size` | ❌       | Results per page (default: 10, max: 100) |
 
 ---
 
