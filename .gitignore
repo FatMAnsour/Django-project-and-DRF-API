@@ -1,0 +1,58 @@
+# Django
+*.sqlite3
+*.pyc
+__pycache__/
+migrations/__pycache__/
+searchapp/__pycache__/
+/media
+/staticfiles
+.env
+.env.local
+.env.*.local
+
+# Virtual Environment
+env/
+venv/
+VENV/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs and databases
+*.log
+*.pot
+*.pid
+*.gz
+
+# Local development
+db.sqlite3
+dummy_data/
+populate_dummy.dat*  # Your specific dummy data file
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Package management
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Environment files
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Editor files
+*.swp
+*.swo
+*~
