@@ -1,246 +1,97 @@
-Product Search API
+# **Product Search API**
 
-This is a Django REST Framework (DRF) project that provides an API for searching products with support for mixed-language queries (English and Arabic), partial keywords, and misspellings. The project uses PostgreSQL for full-text search capabilities.
+A powerful and flexible API built using **Django REST Framework (DRF)**, designed to support advanced product search capabilities with:
 
-Setup Instructions
+- Multilingual query support (English and Arabic)
+- Tolerance for partial keywords and misspellings
+- Efficient full-text search using **PostgreSQL**
 
-Follow these steps to set up the project locally:
+---
 
+## 🚀 Features
 
+- Full-text search powered by PostgreSQL
+- Trigram similarity for fuzzy matching
+- Case-insensitive filtering by category and brand
+- Pagination support for scalable browsing
+- Debugging tools integrated with `django-debug-toolbar`
 
+---
 
+## 🛠️ Installation & Setup
 
-Clone the Repository
-Clone the project to your local machine:
+Follow the instructions below to set up the project locally.
 
-git clone <repository-url>
+### 1. Clone the Repository
+
+```bash
+git clone <https://github.com/FatMAnsour/Django-project-and-DRF-API.git>
 cd <repository-name>
 
-
-
-Set Up a Virtual Environment
-Create and activate a virtual environment:
-
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-
-
-Install Dependencies
-Install the required packages using the requirements.txt file (ensure you have PostgreSQL and django-debug-toolbar installed):
-
+### 2. Set Up a Virtual Environment
+![image](https://github.com/user-attachments/assets/c2be9202-5663-4286-b886-005e7d610530)
+### 3. Install Dependencies
 pip install -r requirements.txt
 
-Note: Ensure your requirements.txt includes:
+## Database Configuration
+### 1. Install PostgreSQL
+Download and install PostgreSQL from the official website:
+👉 https://www.postgresql.org/download/
+Make sure to note the installation directory (e.g., C:\Program Files\PostgreSQL\17\bin on Windows).
+### 2. Create a PostgreSQL Database
+Run the following commands in the terminal or using psql
 
-django>=4.0
-djangorestframework>=3.14
-psycopg2-binary>=2.9
-django-debug-toolbar>=4.0
+![image](https://github.com/user-attachments/assets/7d180809-3cfc-46b0-84b0-51d56dd1c238)
 
+### Then, within the PostgreSQL prompt:
+![image](https://github.com/user-attachments/assets/ffc8cfeb-8bb2-48fb-be3d-b716bfd49b74)
 
+### 3. Configure settings.py
+Update the DATABASES section in product_search/settings.py
 
-Set Up PostgreSQL Database
+![image](https://github.com/user-attachments/assets/614be00e-03d4-4b8a-aff0-d6cfc670b58c)
 
+### 4. Add Required Django Apps
 
+![image](https://github.com/user-attachments/assets/6c52e99e-e197-433e-89da-662711a1ba98)
 
+## Database Migrations
 
+![image](https://github.com/user-attachments/assets/2e623105-a27b-40a1-969c-f2c3e098abd2)
 
-Install PostgreSQL if not already installed.
+## Run the Development Server
+![image](https://github.com/user-attachments/assets/7801c9dc-3566-4a22-97d3-5dcd0def19d6)
 
+##  API Reference
 
-
-Create a database for the project:
-
-psql -U postgres
-CREATE DATABASE product_search_db;
-
-
-
-Update your product_search/settings.py with the database configuration:
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'product_search_db',
-        'USER': 'your_postgres_user',
-        'PASSWORD': 'your_postgres_password',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
-
-
-
-Add searchapp to INSTALLED_APPS in settings.py:
-
-INSTALLED_APPS = [
-    ...
-    'searchapp',
-    'django.contrib.postgres',
-    'debug_toolbar',
-]
-
-
-
-Configure DEBUG_TOOLBAR in settings.py (optional, for debugging):
-
-if DEBUG:
-    INTERNAL_IPS = ['127.0.0.1']
-
-
-
-Run Migrations
-Apply the database migrations to create the necessary tables:
-
-python manage.py makemigrations
-python manage.py migrate
-
-
-
-Create a Superuser (Optional)
-Create a superuser to access the Django admin panel:
-
-python manage.py createsuperuser
-
-
-
-Run the Development Server
-Start the Django development server:
-
-python manage.py runserver
-
-The API will be available at http://localhost:8000, and the admin panel at http://localhost:8000/admin/. The debug toolbar will also be accessible if configured.
-
-API Documentation
-
-Endpoint: Product Search
-
-
-
-
-
+Product Search Endpoint
 URL: /search/
-
-
-
 Method: GET
+Description: Search for products with optional filters for category and brand.
 
+## Example Requests
 
+GET /search/?q=apple
 
-Description: Search for products by query, with optional filters for category and brand. This endpoint is defined in searchapp/urls.py and included in the project’s root urls.py.
+## Response:
 
-
-
-Query Parameters:
-
-
-
-
-
-q (required): The search query (e.g., apple or misspellings like appl).
-
-
-
-category (optional): Filter by category name (case-insensitive, e.g., fruit).
-
-
-
-brand (optional): Filter by brand name (case-insensitive, e.g., nestle).
-
-
-
-page (optional): Page number for pagination (default: 1).
-
-
-
-page_size (optional): Number of results per page (default: 10, max: 100).
-
-Example API Usage
+![image](https://github.com/user-attachments/assets/f651a1bf-7cde-43a5-a979-97efce9786bc)
 
 
 
 
 
-Search for products with the query "apple"
-Request:
-
-GET http://localhost:8000/search/?q=apple
-
-Response:
-
-{
-    "count": 25,
-    "next": "http://localhost:8000/search/?q=apple&page=2",
-    "previous": null,
-    "results": [
-        {
-            "name": "Apple Juice",
-            "brand": "Nestle",
-            "category": "Beverages",
-            "nutrition_facts": "Calories: 120, Sugar: 25g"
-        },
-        {
-            "name": "Apple Pie",
-            "brand": "BakeryCo",
-            "category": "Desserts",
-            "nutrition_facts": "Calories: 300, Fat: 15g"
-        }
-    ]
-}
-
-
-
-Search for products with the query "choco" in the category "snacks"
-Request:
-
-GET http://localhost:8000/search/?q=choco&category=snacks
-
-Response:
-
-{
-    "count": 10,
-    "next": null,
-    "previous": null,
-    "results": [
-        {
-            "name": "Chocolate Bar",
-            "brand": "Mars",
-            "category": "Snacks",
-            "nutrition_facts": "Calories: 200, Sugar: 20g"
-        }
-    ]
-}
-
-
-
-Search with an empty query (Error Case)
-Request:
-
-GET http://localhost:8000/search/
-
-Response:
-
-{
-    "error": "Please enter a search query"
-}
-
-Notes
 
 
 
 
 
-The API supports pagination. Use the next and previous links in the response to navigate through results.
 
 
 
-The search is optimized for partial keywords, misspellings, and mixed-language queries (English and Arabic) using PostgreSQL’s full-text search and trigram similarity.
 
 
 
-The django-debug-toolbar is included for development purposes (accessible at http://localhost:8000/__debug__/) to monitor query performance.
 
 
 
-Ensure you populate the Product, Brand, and Category models with data (e.g., via the admin panel or a script) to see search results.
